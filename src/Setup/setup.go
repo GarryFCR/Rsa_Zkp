@@ -2,6 +2,7 @@ package Setup
 
 import (
 	"crypto/rand"
+	"crypto/rsa"
 	"fmt"
 	"math"
 	"math/big"
@@ -58,71 +59,101 @@ func Pedersen_ver(ck []*big.Int, c, u, r *big.Int) int {
 	return 0
 }
 
-func Setup_Set(lambda int, neu int) ( n, f *big.Int)  {
-  pk, _ := rsa.GenerateKey(rand.Reader , lambda)
-  var F *big.Int
+func Set_setup(lambda, nu int) (n, f *big.Int) {
 
-  for  {
-    F, _ = rand.Int(rand.Reader, pk.PublicKey.N)
-    if F!=pk.Primes[0] && F!=pk.Primes[1] && F!= big.NewInt(1) {
-        break
-      }
+	pk, _ := rsa.GenerateKey(rand.Reader, lambda)
+	var F *big.Int
+	N := pk.PublicKey.N
+
+	for {
+		F, _ = rand.Int(rand.Reader, N)
+		if F != pk.Primes[0] && F != pk.Primes[1] && F != big.NewInt(1) {
+			break
+		}
+	}
+
+	G := F.Exp(F, F, pk.PublicKey.N)
+
+	return N, G
 }
-
-G := F.Exp(F, F, pk.PublicKey.N)
-N := pk.PublicKey.N
-
-return N, G
-}
-
 
 func fu(x *big.Int) *big.Int {
-  temp1 :=big.NewInt(0)
-  temp1.Add(x,big.NewInt(2))
-  temp1.Mul(temp1,big.NewInt(2) )
-  temp2 :=big.NewInt(0)
-  temp2.Add(x,big.NewInt(1))
-  temp2.Mul(temp2, temp2)
 
-//2*(x+2)*
-  fx := math.Log2(temp2)
+	temp1 := big.NewInt(2)
+	temp1.Add(x, temp1)
+	two := big.NewInt(2)
+	temp1.Mul(temp1, two)
 
-  return fx
+	temp2 := big.NewInt(1)
+	temp2.Add(x, temp2)
+
+	//temp2.Mul(temp2, temp2)
+
+	f := new(big.Float).SetInt(temp2)
+	w, _ := f.Float64()
+
+	y := math.Log2(w) * math.Log2(w)
+	//fmt.Println(y)
+
+	temp1.Mul(temp1, big.NewInt(int64(y)))
+
+	return temp1
 
 }
-
-
 
 //Function to map the set element to prime
 
 func Hprime(u *big.Int) *big.Int {
 
+	Huj := fu(u)
+	j := fu(u)
 
-  for j:= add(fu(u),1) ; j< fu(add(u,1) ; j++ {
+	for {
 
-    x := fu(u)+j
-    if x.ProbablyPrime(10) == true {
-      break
-    }
-    return x
-  }
+		temp := Huj
+		temp.Add(temp, j)
+		if temp.ProbablyPrime(10) {
 
+			return temp
+
+		}
+
+		j.Add(j, big.NewInt(1))
+	}
+	return big.NewInt(-1)
 
 }
 
 //Set Commitment function
 
-func Commit(N, G, U[] *big.Int) (c, o *big.Int)  {
+func Set_commit(ck, U []*big.Int) (c, o *big.Int) {
 
-  var P [] *big.Int
-  var Acc *big.Int
-  for i :=0; i< len(U); i++ {
+	P := make([]*big.Int, len(U))
+	N, G := ck[0], ck[1]
 
-    u := U[i]
-    P[i] = Hprime(u)
-    Acc *= G.Exp(G, P[i], pk.PublicKey.N)
-    Acc.Exp(Acc, 1, pk.PublicKey.N)
-   }
-   return Acc, nil
+	for i, u := range U {
+		P[i] = Hprime(u)
+		G.Exp(G, P[i], N)
+	}
+
+	fmt.Println(P)
+	return G, nil
+
+}
+
+func Set_ver(ck, U []*big.Int, Acc *big.Int) int {
+
+	P := make([]*big.Int, len(U))
+	N, G := ck[0], ck[1]
+
+	for i, u := range U {
+		P[i] = Hprime(u)
+		G.Exp(G, P[i], N)
+	}
+
+	if Acc == G {
+		return 1
+	}
+	return 0
 
 }
