@@ -87,13 +87,17 @@ func fu(x *big.Int) *big.Int {
 	temp2 := big.NewInt(1)
 	temp2.Add(x, temp2)
 
-	//temp2.Mul(temp2, temp2)
+	bit := temp2.BitLen()
+	one := big.NewFloat(1)
+
+	divisor := new(big.Float).SetMantExp(one, bit-1)
 
 	f := new(big.Float).SetInt(temp2)
-	w, _ := f.Float64()
 
-	y := math.Log2(w) * math.Log2(w)
-	//fmt.Println(y)
+	z := new(big.Float).Quo(f, divisor)
+	w, _ := z.Float64()
+
+	y := math.Pow((math.Log2(w) + float64(bit-1)), 2)
 
 	temp1.Mul(temp1, big.NewInt(int64(y)))
 
@@ -120,7 +124,7 @@ func Hprime(u *big.Int) *big.Int {
 
 		j.Add(j, big.NewInt(1))
 	}
-	return big.NewInt(-1)
+	//return big.NewInt(-1)
 
 }
 
