@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	prime, g, h := setup.Pedersen_setup(64, 64)
+	prime, g, h := setup.Pedersen_setup(32, 32)
 	//fmt.Println(prime, g, h)
 
 	ck := []*big.Int{prime, g, h}
