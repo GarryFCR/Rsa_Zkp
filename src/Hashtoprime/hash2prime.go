@@ -5,7 +5,7 @@ import (
 	"math/big"
 )
 
-func fu(x *big.Int) *big.Int {
+func Fu(x *big.Int) *big.Int {
 
 	temp1 := big.NewInt(2)
 	temp1.Add(x, temp1)
@@ -37,8 +37,8 @@ func fu(x *big.Int) *big.Int {
 
 func Hprime(u *big.Int) *big.Int {
 
-	Huj := fu(u)
-	j := fu(u)
+	Huj := Fu(u)
+	j := Fu(u)
 
 	for {
 
