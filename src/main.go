@@ -33,4 +33,8 @@ func main() {
 
 	ver1 := setup.Set_ver(ck1, set, com)
 	fmt.Println(ver1)
+
+
+	//alpha1, alpha2, s_e, s_r, s_r_dash := modEq.Prove(N, g, h, prime, g, h,  )
+
 }
