@@ -22,7 +22,7 @@ func Set_setup(lambda, nu int) (n, f *big.Int) {
 		}
 	}
 
-	G := F.Exp(F, F, pk.PublicKey.N)
+	G := F.Exp(F, big.NewInt(2), pk.PublicKey.N)
 
 	return N, G
 }
