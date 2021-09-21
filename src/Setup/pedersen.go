@@ -37,15 +37,15 @@ func Pedersen_setup(lambda, nu int64) (x, y, z *big.Int) {
 
 }
 
-func Pedersen_commit(ck []*big.Int, u *big.Int) (commitment, open *big.Int) {
+func Pedersen_commit(ck []*big.Int, q, u *big.Int) (commitment, open *big.Int) {
 	//var c *big.Int
 	r, _ := rand.Int(rand.Reader, ck[0])
-	prime := ck[0]
+	//prime := ck[0]
 	g, h := ck[1], ck[2]
-	g.Exp(g, u, prime)
-	h.Exp(h, r, prime)
+	g.Exp(g, u, q)
+	h.Exp(h, r, q)
 	c := g.Mul(g, h)
-	c.Mod(c, prime)
+	c.Mod(c, q)
 
 	return c, r
 }

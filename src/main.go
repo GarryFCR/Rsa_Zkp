@@ -14,7 +14,7 @@ func main() {
 	ck := []*big.Int{prime, g, h}
 	u := big.NewInt(12345)
 
-	c, o := setup.Pedersen_commit(ck, u)
+	c, o := setup.Pedersen_commit(ck, prime, u)
 	//fmt.Println(c, o)
 
 	ver := setup.Pedersen_ver(ck, c, u, o)
@@ -33,7 +33,6 @@ func main() {
 
 	ver1 := setup.Set_ver(ck1, set, com)
 	fmt.Println(ver1)
-
 
 	//alpha1, alpha2, s_e, s_r, s_r_dash := modEq.Prove(N, g, h, prime, g, h,  )
 
