@@ -93,8 +93,8 @@ func Prove(crs, commitment, witness []*big.Int, lambda_s, lambda_z, mu int64) []
 
 	alpha1 := Generate_alpha(G, H, N, re, rr)
 	alpha2 := Generate_alpha(G, H, N, rr2, rr3)
-	alpha3 := Generate_alpha(Cw, H, N, re, r_beta.Neg(r_beta))
-	alpha4 := Generate_alpha_ver(G, H, Cr, r_beta.Neg(r_beta), r_delta.Neg(r_delta), re, N)
+	alpha3 := Generate_alpha(Cw, new(big.Int).ModInverse(H, N), N, re, r_beta)
+	alpha4 := Generate_alpha_ver(new(big.Int).ModInverse(G, N), new(big.Int).ModInverse(H, N), Cr, r_beta, r_delta, re, N)
 
 	list := []*big.Int{alpha1, alpha2, alpha3, alpha4, commitment[0], commitment[1]}
 	h := sha256.New()
@@ -138,8 +138,8 @@ func VerProof(crs, commitment, pi []*big.Int, lambda, lambda_s, mu int64) int {
 
 	alpha_1 := Generate_alpha_ver(Ce, G, H, c, pi[6], pi[7], N)
 	alpha_2 := Generate_alpha_ver(pi[1], G, H, c, pi[8], pi[9], N)
-	alpha_3 := Generate_alpha_ver(Acc, pi[0], H, c, pi[6], pi[9].Neg(pi[9]), N)
-	alpha_4 := Generate_alpha_ver(pi[1], G, H, pi[6], pi[9].Neg(pi[9]), pi[10].Neg(pi[10]), N)
+	alpha_3 := Generate_alpha_ver(Acc, pi[0], new(big.Int).ModInverse(H, N), c, pi[6], pi[9], N)
+	alpha_4 := Generate_alpha_ver(pi[1], new(big.Int).ModInverse(G, N), new(big.Int).ModInverse(H, N), pi[6], pi[10], pi[11], N)
 
 	upper := big.NewInt(2)
 	upper.Exp(upper, big.NewInt(lambda+lambda_s+mu+1), nil)
