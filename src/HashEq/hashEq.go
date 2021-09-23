@@ -13,7 +13,7 @@ import (
 func Prove(crs, commitment, witness []*big.Int, lambda_s, lambda_z, mu, eta int64) []*big.Int {
 
 	q, g, h := crs[0], crs[1], crs[2]
-	cu, ce := commitment[0], commitment[1]
+	ce, cu := commitment[0], commitment[1]
 	e, u, rq, ru, j := witness[0], witness[1], witness[2], witness[3], witness[4]
 
 	//Sampling
