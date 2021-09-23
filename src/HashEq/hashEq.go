@@ -82,3 +82,35 @@ func Prove(crs, commitment, witness []*big.Int, lambda_s, lambda_z, mu, eta int6
 	return pi
 
 }
+
+func VerProof(crs, commitment, pi []*big.Int) int {
+
+	ce, cu := commitment[0], commitment[1]
+	q, g, h := crs[0], crs[1], crs[2]
+	alpha1, alpha2, alpha3, alpha4 := pi[3], pi[4], pi[5], pi[6]
+	se, sr, srr1, srr2, sr1, sr2, se_dash, sr_dash := pi[7], pi[8], pi[9], pi[10], pi[11], pi[12], pi[13], pi[14]
+
+	//c
+	list := []*big.Int{alpha1, alpha2, alpha4, ce, cu}
+	h1 := sha256.New()
+	for _, y := range list {
+		h1.Write(y.Bytes())
+	}
+	hash := fmt.Sprintf("%x", h1.Sum(nil))
+	c := new(big.Int)
+	c.SetString(hash, 16)
+	c = hash2prime.Fu(c)
+
+	alpha_1 := generate.Generate_alpha_ver(ce, g, h, c, se, sr, q)
+	alpha_2 := generate.Generate_alpha_ver(cu, g, h, c, srr1, srr2, q)
+	alpha_3 := generate.Generate_alpha_ver(pi[1], cu, pi[0], c, sr1, sr2, q)
+	CjxCl := new(big.Int).Mul(pi[0], pi[2])
+	alpha_4 := generate.Generate_alpha_ver(ce, CjxCl, h, se_dash, c, sr_dash, q)
+
+	if alpha1 == alpha_1 && alpha2 == alpha_2 && alpha3 == alpha_3 && alpha4 == alpha_4 {
+		return 1
+	}
+
+	return 0
+
+}
