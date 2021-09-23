@@ -1,3 +1,11 @@
+/*
+	RSA Accumulator has a limitation that it deals with only set of primes
+	To overcome this limitation we map arbitrary values to primes in collision-resistant manner
+
+	We are using deterministic map H(u,j) = f(u)+j for Hash to ptime where f(u)= 2*(u+2)*log2(u+1)^2
+	the prime is ensured using Cramer's conjecture
+*/
+
 package Hashtoprime
 
 import (
@@ -5,6 +13,7 @@ import (
 	"math/big"
 )
 
+//fu returns the value of u evaluated by f(x)=2*(u+2)*log2(u+1)^2
 func Fu(x *big.Int) *big.Int {
 
 	temp1 := big.NewInt(2)
@@ -33,7 +42,7 @@ func Fu(x *big.Int) *big.Int {
 
 }
 
-//Function to map the set element to prime
+//Hprime returns the prime which is mapped to set element u in collision resistant manner
 
 func Hprime(u *big.Int) *big.Int {
 

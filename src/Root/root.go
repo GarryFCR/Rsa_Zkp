@@ -1,3 +1,7 @@
+/* 
+	The Root Protocol is the NIZK proof of a committed root of public RSA group element Acc
+	It takes an integer commitment to an element e and proves knowledge of an e-th root of Acc ie, W=Acc^(1/e) in zero knowledge
+*/
 package Root
 
 import (
@@ -8,6 +12,8 @@ import (
 
 	hash2prime "../Hashtoprime"
 )
+
+//Generate_random generates a random number between specified range
 
 func Generate_random(bound *big.Int) *big.Int {
 
@@ -35,6 +41,8 @@ func Generate_s(a, b, c *big.Int) *big.Int {
 
 }
 
+//Generate_alpha returns G^xH^y (mod N)
+
 func Generate_alpha(G, H, N, x, y *big.Int) *big.Int {
 
 	alpha := new(big.Int).Exp(G, x, N)
@@ -45,7 +53,7 @@ func Generate_alpha(G, H, N, x, y *big.Int) *big.Int {
 	return alpha
 
 }
-
+// Generate_alpha_ver returns G^xH^yC^z (mod N)
 func Generate_alpha_ver(G, H, C, x, y, z, N *big.Int) *big.Int {
 
 	alpha := new(big.Int).Exp(G, x, N)
@@ -58,6 +66,8 @@ func Generate_alpha_ver(G, H, C, x, y, z, N *big.Int) *big.Int {
 
 	return alpha
 }
+
+// Prove generates the proof in ZK for the element e and its witness W
 
 func Prove(crs, commitment, witness []*big.Int, lambda_s, lambda_z, mu int64) []*big.Int {
 
@@ -118,7 +128,8 @@ func Prove(crs, commitment, witness []*big.Int, lambda_s, lambda_z, mu int64) []
 	return pi
 
 }
-
+//VerProof Verifies the Root protocol proof and returns 1 if proof is correct
+// Else returns 0
 func VerProof(crs, commitment, pi []*big.Int, lambda, lambda_s, mu int64) int {
 
 	N, G, H := crs[0], crs[1], crs[2]

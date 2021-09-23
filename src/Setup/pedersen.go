@@ -1,3 +1,10 @@
+/* 
+	Pederson commitment is used to commit to set elements in some large prime order group. 
+	we have used Z/pZ group for our implementation, where p is prime of nu bits.
+*/
+
+
+
 package Setup
 
 import (
@@ -5,6 +12,10 @@ import (
 	"fmt"
 	"math/big"
 )
+
+// Pedersen_setup Generates prime and g and h
+// prime for prime order group for committing the set member.
+// g and h are random group element in that prime order group.
 
 func Pedersen_setup(lambda, nu int64) (x, y, z *big.Int) {
 	i := 0
@@ -37,6 +48,8 @@ func Pedersen_setup(lambda, nu int64) (x, y, z *big.Int) {
 
 }
 
+// Pedersen_commit returns the commitent c of set element u
+
 func Pedersen_commit(ck []*big.Int, q, u *big.Int) (commitment, open *big.Int) {
 	//var c *big.Int
 	r, _ := rand.Int(rand.Reader, ck[0])
@@ -50,6 +63,8 @@ func Pedersen_commit(ck []*big.Int, q, u *big.Int) (commitment, open *big.Int) {
 	return c, r
 }
 
+// Pedersen_ver verifies the correctness of the commitment and returns 1 if its correct
+// Else returns 0
 func Pedersen_ver(ck []*big.Int, c, u, r *big.Int) int {
 
 	prime, g, h := ck[0], ck[1], ck[2]
