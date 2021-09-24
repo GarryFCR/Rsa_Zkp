@@ -8,6 +8,7 @@ import (
 	root "./Root"
 	setm "./SetMembership"
 	setup "./Setup"
+	mod "./modEq"
 )
 
 func main() {
@@ -53,10 +54,22 @@ func main() {
 	root_witness := []big.Int{e, r, *W}
 
 	pi_root := root.Prove(crs[0:3], commit, root_witness, int64(32), int64(32), int64(32))
-	//fmt.Println(pi_root)
 
 	ver2 := root.VerProof(crs[0:3], commit, pi_root, int64(32), int64(32), int64(32))
 	if ver2 == 1 {
 		fmt.Println("Root :Root VERIFIED")
 	}
+
+	//ModEp-----------------------------------------------------------------------------------
+	ce, rq := setup.Pedersen_commit(crs[3:], q, e)
+	commit_mod := []big.Int{Ce, ce}
+	mod_witness := []big.Int{e, e, r, rq}
+	pi_mod := mod.Prove(crs, commit_mod, mod_witness, int64(64))
+	fmt.Println(ce)
+
+	ver3 := mod.VerProof(crs, commit_mod, pi_mod)
+	if ver3 == 1 {
+		fmt.Println("ModEq :Modeq VERIFIED")
+	}
+
 }
