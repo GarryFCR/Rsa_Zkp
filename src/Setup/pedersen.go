@@ -6,13 +6,11 @@ import (
 	"math/big"
 )
 
-func Pedersen_setup(lambda, nu int64) (x, y, z *big.Int) {
+func Pedersen_setup(lambda, nu int64) (x, y, z big.Int) {
+
 	i := 0
 	var prime_bound1, prime_bound2 *big.Int
 	var prime *big.Int
-
-	//upper := big.NewInt(int64(math.Pow(2, float64(nu))))
-	//lower := big.NewInt(int64(math.Pow(2, float64(nu-1))))
 
 	upper := big.NewInt(2)
 	upper.Exp(upper, big.NewInt(nu), nil)
@@ -33,31 +31,32 @@ func Pedersen_setup(lambda, nu int64) (x, y, z *big.Int) {
 	g, _ := rand.Int(rand.Reader, prime)
 	h, _ := rand.Int(rand.Reader, prime)
 	//fmt.Println(prime, g, h)
-	return prime, g, h
+	return *prime, *g, *h
 
 }
 
-func Pedersen_commit(ck []*big.Int, q, u *big.Int) (commitment, open *big.Int) {
-	//var c *big.Int
-	r, _ := rand.Int(rand.Reader, ck[0])
-	//prime := ck[0]
-	g, h := ck[1], ck[2]
-	g.Exp(g, u, q)
-	h.Exp(h, r, q)
-	c := g.Mul(g, h)
-	c.Mod(c, q)
+func Pedersen_commit(ck []big.Int, q, u big.Int) (commitment, open big.Int) {
 
-	return c, r
+	r, _ := rand.Int(rand.Reader, &q)
+	var g, h = ck[1], ck[2]
+	g.Exp(&g, &u, &q)
+	h.Exp(&h, r, &q)
+
+	c := new(big.Int).Mul(&g, &h)
+	c.Mod(c, &q)
+
+	return *c, *r
 }
 
-func Pedersen_ver(ck []*big.Int, c, u, r *big.Int) int {
+func Pedersen_ver(ck []big.Int, c, u, r big.Int) int {
 
 	prime, g, h := ck[0], ck[1], ck[2]
-	g.Exp(g, u, prime)
-	h.Exp(h, r, prime)
-	c_ := g.Mul(g, h)
-	c_.Mod(c_, prime)
-	if c == c_ {
+	g.Exp(&g, &u, &prime)
+	h.Exp(&h, &r, &prime)
+	c_ := new(big.Int).Mul(&g, &h)
+	c_.Mod(c_, &prime)
+
+	if c_.Cmp(&c) == 0 {
 		return 1
 	}
 	return 0

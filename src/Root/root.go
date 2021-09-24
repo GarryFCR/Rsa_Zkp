@@ -6,153 +6,189 @@ import (
 	"fmt"
 	"math/big"
 
+	//"unsafe"
+
 	hash2prime "../Hashtoprime"
 )
 
-func Generate_random(bound *big.Int) *big.Int {
+func Generate_random(bound big.Int) big.Int {
 
 	upper := bound
-	lower := bound.Neg(bound)
+	lower := new(big.Int).Neg(&bound)
 
 	//rand.Seed(time.Now().UnixNano())
 	//n := a + rand.Intn(b-a+1)
 
-	max := upper.Sub(upper, lower)
+	max := new(big.Int).Sub(&upper, lower)
 	max.Add(max, big.NewInt(1))
 
 	random, _ := rand.Int(rand.Reader, max)
 	random.Add(random, lower)
 
-	return random
+	return *random
 }
 
-func Generate_s(a, b, c *big.Int) *big.Int {
+func Generate_s(a, b, c big.Int) big.Int {
 
-	s := new(big.Int).Mul(b, c)
-	s.Sub(a, s)
+	s := new(big.Int).Mul(&b, &c)
+	s.Sub(&a, s)
 
-	return s
+	return *s
 
 }
 
-func Generate_alpha(G, H, N, x, y *big.Int) *big.Int {
+func Generate_alpha(G, H, N, x, y big.Int) big.Int {
 
-	alpha := new(big.Int).Exp(G, x, N)
-	temp := new(big.Int).Exp(H, y, N)
+	if x.Sign() == -1 {
+		G = *new(big.Int).ModInverse(&G, &N)
+		x.Neg(&x)
+	}
+	if y.Sign() == -1 {
+		H = *new(big.Int).ModInverse(&H, &N)
+		y.Neg(&y)
+	}
+
+	alpha := big.NewInt(0).Exp(&G, &x, &N)
+	temp := big.NewInt(0).Exp(&H, &y, &N)
 	alpha.Mul(alpha, temp)
-	alpha.Mod(alpha, N)
+	alpha.Mod(alpha, &N)
 
-	return alpha
+	return *alpha
 
 }
 
-func Generate_alpha_ver(G, H, C, x, y, z, N *big.Int) *big.Int {
+func Generate_alpha_ver(G, H, C, x, y, z, N big.Int) big.Int {
 
-	alpha := new(big.Int).Exp(G, x, N)
-	temp := new(big.Int).Exp(H, y, N)
-	temp1 := new(big.Int).Exp(C, z, N)
+	if x.Sign() == -1 {
+		G = *new(big.Int).ModInverse(&G, &N)
+		x.Neg(&x)
+	}
+	if y.Sign() == -1 {
+		H = *new(big.Int).ModInverse(&H, &N)
+		y.Neg(&y)
+	}
+	if z.Sign() == -1 {
+		C = *new(big.Int).ModInverse(&C, &N)
+		z.Neg(&z)
+	}
+
+	alpha := new(big.Int).Exp(&G, &x, &N)
+	temp := new(big.Int).Exp(&H, &y, &N)
+	temp1 := new(big.Int).Exp(&C, &z, &N)
 	alpha.Mul(alpha, temp)
-	alpha.Mod(alpha, N)
+	alpha.Mod(alpha, &N)
 	alpha.Mul(alpha, temp1)
-	alpha.Mod(alpha, N)
+	alpha.Mod(alpha, &N)
 
-	return alpha
+	return *alpha
 }
 
-func Prove(crs, commitment, witness []*big.Int, lambda_s, lambda_z, mu int64) []*big.Int {
+func Prove(crs, commitment, witness []big.Int, lambda_s, lambda_z, mu int64) []big.Int {
 
 	N, G, H := crs[0], crs[1], crs[2]
 	e, r, W := witness[0], witness[1], witness[2]
-	bound := N
-	bound.Div(bound, big.NewInt(4))
 
-	r2 := Generate_random(bound.Sub(bound, big.NewInt(1)))
-	r3 := Generate_random(bound.Sub(bound, big.NewInt(1)))
+	bound := *new(big.Int).Div(&N, big.NewInt(4))
 
-	Cw := Generate_alpha(W, H, big.NewInt(1), r2, N)
-	Cr := Generate_alpha(G, H, r2, r3, N)
+	r2 := Generate_random(*new(big.Int).Sub(&bound, big.NewInt(1)))
+	r3 := Generate_random(*new(big.Int).Sub(&bound, big.NewInt(1)))
+
+	Cw := Generate_alpha(W, H, N, *big.NewInt(1), r2)
+	Cr := Generate_alpha(G, H, N, r2, r3)
 
 	bound1 := big.NewInt(2)
 	bound1.Exp(bound1, big.NewInt(lambda_s+lambda_z+mu), nil)
-	re := Generate_random(bound1)
+	re := Generate_random(*bound1)
 
 	bound2 := big.NewInt(2)
 	bound2.Exp(bound2, big.NewInt(lambda_s+lambda_z), nil)
-	bound2.Mul(bound, bound2)
+	bound2.Mul(&bound, bound2)
 	bound2.Sub(bound2, big.NewInt(1))
-	rr := Generate_random(bound2)
-	rr2 := Generate_random(bound2)
-	rr3 := Generate_random(bound2)
+	rr := Generate_random(*bound2)
+	rr2 := Generate_random(*bound2)
+	rr3 := Generate_random(*bound2)
 
 	bound3 := big.NewInt(2)
 	bound3.Exp(bound3, big.NewInt(lambda_s+lambda_z+mu), nil)
-	bound3.Mul(bound, bound3)
+	bound3.Mul(&bound, bound3)
 	bound3.Sub(bound3, big.NewInt(1))
-	r_beta := Generate_random(bound3)
-	r_delta := Generate_random(bound3)
+	r_beta := Generate_random(*bound3)
+	r_delta := Generate_random(*bound3)
+	//fmt.Println("GHNRERR:", G, H, N, re, rr)
 
 	alpha1 := Generate_alpha(G, H, N, re, rr)
 	alpha2 := Generate_alpha(G, H, N, rr2, rr3)
-	alpha3 := Generate_alpha(Cw, new(big.Int).ModInverse(H, N), N, re, r_beta)
-	alpha4 := Generate_alpha_ver(new(big.Int).ModInverse(G, N), new(big.Int).ModInverse(H, N), Cr, r_beta, r_delta, re, N)
+	alpha3 := Generate_alpha(Cw, *new(big.Int).ModInverse(&H, &N), N, re, r_beta)
+	alpha4 := Generate_alpha_ver(*new(big.Int).ModInverse(&G, &N), *new(big.Int).ModInverse(&H, &N), Cr, r_beta, r_delta, re, N)
+	//fmt.Println("xxx:", alpha1, alpha2, alpha3, alpha4)
 
-	list := []*big.Int{alpha1, alpha2, alpha3, alpha4, commitment[0], commitment[1]}
+	list := []big.Int{alpha1, alpha2, alpha3, alpha4, commitment[0], commitment[1]}
 	h := sha256.New()
 	for _, y := range list {
 		h.Write(y.Bytes())
 	}
 	hash := fmt.Sprintf("%x", h.Sum(nil))
-	c := new(big.Int)
-	c.SetString(hash, 16)
-	//fmt.Println(c)
-	c = hash2prime.Fu(c)
+	c_hash := new(big.Int)
+	c_hash.SetString(hash, 16)
+	c := hash2prime.Fu(*c_hash)
 
 	se := Generate_s(re, c, e)
 	sr := Generate_s(rr, c, r)
 	sr2 := Generate_s(rr2, c, r2)
 	sr3 := Generate_s(rr3, c, r3)
-	s_beta := Generate_s(r_beta, c.Mul(c, e), r2)
-	s_delta := Generate_s(r_delta, c.Mul(c, e), r3)
+	s_beta := Generate_s(r_beta, *new(big.Int).Mul(&c, &e), r2)
+	s_delta := Generate_s(r_delta, *new(big.Int).Mul(&c, &e), r3)
 
-	pi := []*big.Int{Cw, Cr, alpha1, alpha2, alpha3, alpha4, se, sr, sr2, sr3, s_beta, s_delta}
+	pi := []big.Int{Cw, Cr, alpha1, alpha2, alpha3, alpha4, se, sr, sr2, sr3, s_beta, s_delta}
+	//fmt.Println("pi:", pi[2:6])
+	//fmt.Printf("Size:%d\n", unsafe.Sizeof(pi))
+
 	return pi
 
 }
 
-func VerProof(crs, commitment, pi []*big.Int, lambda, lambda_s, mu int64) int {
+func VerProof(crs, commitment, pi []big.Int, lambda, lambda_s, mu int64) int {
 
 	N, G, H := crs[0], crs[1], crs[2]
 	Ce, Acc := commitment[0], commitment[1]
 	alpha1, alpha2, alpha3, alpha4 := pi[2], pi[3], pi[4], pi[5]
 
-	list := []*big.Int{alpha1, alpha2, alpha3, alpha4, Ce, Acc}
+	list := []big.Int{alpha1, alpha2, alpha3, alpha4, Ce, Acc}
 	h := sha256.New()
 	for _, y := range list {
 		h.Write(y.Bytes())
 	}
 	hash := fmt.Sprintf("%x", h.Sum(nil))
-	c := new(big.Int)
-	c.SetString(hash, 16)
-	//fmt.Println(c)
-	c = hash2prime.Fu(c)
+	c_hash := new(big.Int)
+	c_hash.SetString(hash, 16)
+	c := hash2prime.Fu(*c_hash)
 
 	alpha_1 := Generate_alpha_ver(Ce, G, H, c, pi[6], pi[7], N)
 	alpha_2 := Generate_alpha_ver(pi[1], G, H, c, pi[8], pi[9], N)
-	alpha_3 := Generate_alpha_ver(Acc, pi[0], new(big.Int).ModInverse(H, N), c, pi[6], pi[9], N)
-	alpha_4 := Generate_alpha_ver(pi[1], new(big.Int).ModInverse(G, N), new(big.Int).ModInverse(H, N), pi[6], pi[10], pi[11], N)
+	alpha_3 := Generate_alpha_ver(Acc, pi[0], *new(big.Int).ModInverse(&H, &N), c, pi[6], pi[10], N)
+	alpha_4 := Generate_alpha_ver(pi[1], *new(big.Int).ModInverse(&G, &N), *new(big.Int).ModInverse(&H, &N), pi[6], pi[10], pi[11], N)
+	//fmt.Println(alpha_1, alpha_2, alpha_3, alpha_4)
 
 	upper := big.NewInt(2)
 	upper.Exp(upper, big.NewInt(lambda+lambda_s+mu+1), nil)
 	lower := new(big.Int).Neg(upper)
 
 	var se_bool bool
-	upper_bound := new(big.Int).Sub(upper, pi[6])
-	lower_bound := new(big.Int).Sub(pi[6], lower)
-	if upper_bound.Sign() == 1 && lower_bound.Sign() == 1 {
-		se_bool = true
+	upper_bound := new(big.Int).Sub(upper, &pi[6])
+	lower_bound := new(big.Int).Sub(&pi[6], lower)
+
+	if upper_bound.Sign() == 1 {
+		if pi[6].Sign() == -1 && lower_bound.Sign() == -1 {
+			se_bool = true
+
+		}
+		if pi[6].Sign() == 1 && lower_bound.Sign() == 1 {
+			se_bool = true
+
+		}
 	}
 
-	if alpha1 == alpha_1 && alpha2 == alpha_2 && alpha3 == alpha_3 && alpha4 == alpha_4 && se_bool {
+	if alpha1.Cmp(&alpha_1) == 0 && alpha2.Cmp(&alpha_2) == 0 && alpha3.Cmp(&alpha_3) == 0 && alpha4.Cmp(&alpha_4) == 0 && se_bool {
 		return 1
 	}
 

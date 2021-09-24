@@ -5,15 +5,13 @@ import (
 	"math/big"
 )
 
-func Fu(x *big.Int) *big.Int {
+func Fu(x big.Int) big.Int {
 
-	temp1 := big.NewInt(2)
-	temp1.Add(x, temp1)
-	two := big.NewInt(2)
-	temp1.Mul(temp1, two)
+	u := x
+	temp1 := new(big.Int).Add(&u, big.NewInt(2))
+	temp1.Mul(temp1, big.NewInt(2))
 
-	temp2 := big.NewInt(1)
-	temp2.Add(x, temp2)
+	temp2 := new(big.Int).Add(&u, big.NewInt(1))
 
 	bit := temp2.BitLen()
 	one := big.NewFloat(1)
@@ -29,13 +27,13 @@ func Fu(x *big.Int) *big.Int {
 
 	temp1.Mul(temp1, big.NewInt(int64(y)))
 
-	return temp1
+	return *temp1
 
 }
 
 //Function to map the set element to prime
 
-func Hprime(u *big.Int) *big.Int {
+func Hprime(u big.Int) big.Int {
 
 	Huj := Fu(u)
 	j := Fu(u)
@@ -43,14 +41,14 @@ func Hprime(u *big.Int) *big.Int {
 	for {
 
 		temp := Huj
-		temp.Add(temp, j)
+		temp.Add(&temp, &j)
 		if temp.ProbablyPrime(10) {
 
 			return temp
 
 		}
 
-		j.Add(j, big.NewInt(1))
+		j.Add(&j, big.NewInt(1))
 	}
 	//return big.NewInt(-1)
 
