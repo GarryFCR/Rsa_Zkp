@@ -1,3 +1,7 @@
+/*
+	The Root Protocol is the NIZK proof of a committed root of public RSA group element Acc
+	It takes an integer commitment to an element e and proves knowledge of an e-th root of Acc ie, W=Acc^(1/e) in zero knowledge
+*/
 package Root
 
 import (

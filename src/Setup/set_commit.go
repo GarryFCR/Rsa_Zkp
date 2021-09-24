@@ -1,3 +1,10 @@
+/*
+	SetCommitment is a (non-hiding) commitment scheme for set of strings.
+	In this set Commitment scheme we map the set members to set of prime using Hash2prime function
+	and then the Set Commitment is build as an RSA Accumulator to the set of those primes derived from
+	set of strings using Has2prime
+*/
+
 package Setup
 
 import (
@@ -26,7 +33,7 @@ func Set_setup(lambda, mu int) (n, f, p, q big.Int) {
 	return *N, *G, *pk.Primes[0], *pk.Primes[1]
 }
 
-//Set Commitment function
+//Set_commit generates the RSA Accumulator for the set of primes derived from set of strings using Hash2prime
 
 func Set_commit(ck, U []big.Int) (c, o big.Int) {
 

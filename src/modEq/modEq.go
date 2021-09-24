@@ -1,3 +1,10 @@
+/*
+	Proof of Equality of Commitment
+
+	The ModEq protocol gives a ZK proof of the fact that C_e (committed in RSA group) and c_e (committed in prime order group)
+	commits to the same value modulo q
+*/
+
 package modEq
 
 import (
@@ -9,6 +16,7 @@ import (
 	generate "../Root"
 )
 
+//Prove function returns the proof of the fact that C-e and c_e commits to the same value
 //q is taken as prime for group Zq
 func Prove(crs, commitment, witness []*big.Int, lambda int64) []*big.Int {
 
@@ -49,6 +57,8 @@ func Prove(crs, commitment, witness []*big.Int, lambda int64) []*big.Int {
 
 }
 
+// VerProof verifies the correctness of the proof and returns 1 if correct
+// Else returns 0
 func VerProof(crs, commitment, pi []*big.Int) int {
 
 	x := []*big.Int{pi[0], pi[1], commitment[0], commitment[1]}

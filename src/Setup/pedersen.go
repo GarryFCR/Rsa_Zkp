@@ -1,3 +1,8 @@
+/*
+	Pederson commitment is used to commit to set elements in some large prime order group.
+	we have used Z/pZ group for our implementation, where p is prime of nu bits.
+*/
+
 package Setup
 
 import (
