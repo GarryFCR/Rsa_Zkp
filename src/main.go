@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/big"
 
+	HashEq "./HashEq"
 	hash2prime "./Hashtoprime"
 	root "./Root"
 	setm "./SetMembership"
@@ -14,7 +15,7 @@ import (
 func main() {
 
 	//PEDERSEN COMMITMENT-----------------------------------------
-	prime, g, h := setup.Pedersen_setup(32, 32)
+	prime, g, h := setup.Pedersen_setup(12, 12)
 	ck := []big.Int{prime, g, h}
 	u := big.NewInt(12345)
 
@@ -26,7 +27,7 @@ func main() {
 	}
 
 	//SET COMMITMENT--------------------------------------------
-	N, G, p, q := setup.Set_setup(32, 32)
+	N, G, p, q := setup.Set_setup(12, 12)
 
 	ck1 := []big.Int{N, G}
 	set := []big.Int{*big.NewInt(12342), *big.NewInt(12343), *big.NewInt(12344), *big.NewInt(12345)}
@@ -53,23 +54,36 @@ func main() {
 	commit := []big.Int{Ce, com}
 	root_witness := []big.Int{e, r, *W}
 
-	pi_root := root.Prove(crs[0:3], commit, root_witness, int64(32), int64(32), int64(32))
+	pi_root := root.Prove(crs[0:3], commit, root_witness, int64(12), int64(12), int64(12))
 
-	ver2 := root.VerProof(crs[0:3], commit, pi_root, int64(32), int64(32), int64(32))
+	ver2 := root.VerProof(crs[0:3], commit, pi_root, int64(12), int64(12), int64(12))
 	if ver2 == 1 {
 		fmt.Println("Root :Root VERIFIED")
 	}
 
-	//ModEp-----------------------------------------------------------------------------------
-	ce, rq := setup.Pedersen_commit(crs[3:], q, e)
+	//ModEq-----------------------------------------------------------------------------------
+	ce, rq := setup.Pedersen_commit(crs[3:], prime, e)
 	commit_mod := []big.Int{Ce, ce}
 	mod_witness := []big.Int{e, e, r, rq}
 	pi_mod := mod.Prove(crs, commit_mod, mod_witness, int64(64))
-	fmt.Println(ce)
+	//fmt.Println(ce)
 
 	ver3 := mod.VerProof(crs, commit_mod, pi_mod)
 	if ver3 == 1 {
 		fmt.Println("ModEq :Modeq VERIFIED")
 	}
 
+	//HashEq-----------------------------------------------------------------------------------
+	fu := hash2prime.Fu(*u)
+	j := new(big.Int).Sub(&e, &fu)
+
+	commit_hash := []big.Int{ce, c}
+	hash_witness := []big.Int{e, *u, rq, o, *j}
+
+	pi_hash := HashEq.Prove(crs[3:], commit_hash, hash_witness, int64(12), int64(12), int64(12), int64(12))
+
+	ver4 := HashEq.VerProof(crs[3:], commit_hash, pi_hash)
+	if ver4 == 1 {
+		fmt.Println("HashEq :hash VERIFIED")
+	}
 }

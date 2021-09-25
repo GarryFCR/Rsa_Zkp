@@ -19,9 +19,9 @@ func KeyGen(ck []big.Int) []big.Int {
 			break
 		}
 	}
-	H.Exp(H, big.NewInt(2), &N)
+	H_ := *new(big.Int).Exp(H, big.NewInt(2), &N)
 
-	crs := []big.Int{ck[0], ck[1], *H, ck[2], ck[3], ck[4]}
+	crs := []big.Int{ck[0], ck[1], H_, ck[2], ck[3], ck[4]}
 	return crs
 
 }

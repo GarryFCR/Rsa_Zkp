@@ -54,8 +54,25 @@ func Prove(crs, commitment, witness []big.Int, lambda int64) []big.Int {
 	sr := generate.Generate_s(rr, c, r)
 	srq := generate.Generate_s(*rrq, c, rq)
 	srq.Mod(&srq, &q)
+	//--------------------------------------------------------------------------------
+	//h_inverse := new(big.Int).ModInverse(&h, &q)
+	//g_inverse := new(big.Int).ModInverse(&g, &q)
+	cxe := new(big.Int).Mul(&c, &e)
+	cxr := new(big.Int).Mul(&c, &rq)
+	cxe.Mod(cxe, &q)
+	cxr.Mod(cxr, &q)
+	//numerator := new(big.Int).Exp(&commitment[1], &c, &q)
+	ge := new(big.Int).Exp(&g, cxe, &q)
+	hrq := new(big.Int).Exp(&h, cxr, &q)
+	denominator := new(big.Int).Mul(ge, hrq)
+	denominator.Mod(denominator, &q)
+	//fmt.Println(new(big.Int).Sub(numerator, denominator))
+	//--------------------------------------------------------------------------------
 
-	pi := []big.Int{alpha1, alpha2, se, sr, srq}
+	/*fmt.Println(new(big.Int).Mul(&c, &e).BitLen())
+	fmt.Println(new(big.Int).Mul(&c, &rq).BitLen())
+	fmt.Println(q.BitLen())
+	*/pi := []big.Int{alpha1, alpha2, se, sr, srq}
 	return pi
 
 }
@@ -75,12 +92,9 @@ func VerProof(crs, commitment, pi []big.Int) int {
 
 	alpha_1 := generate.Generate_alpha_ver(commitment[0], crs[1], crs[2], c, pi[2], pi[3], crs[0])
 	alpha_2 := generate.Generate_alpha_ver(commitment[1], crs[4], crs[5], c, *new(big.Int).Mod(&pi[2], &crs[3]), pi[4], crs[3])
-	fmt.Println(alpha_1, alpha_2)
-	fmt.Println(pi[0], pi[1])
 
-	w := generate.Generate_alpha_ver(commitment[1], crs[4], crs[5], c, *new(big.Int).Mod(&pi[2], &crs[3]), pi[4], crs[3])
-
-	fmt.Println("xxx:", w)
+	//fmt.Println(&pi[0], &pi[1])
+	//fmt.Println(&alpha_1, &alpha_2)
 
 	if pi[0].Cmp(&alpha_1) == 0 && pi[1].Cmp(&alpha_2) == 0 {
 		return 1
