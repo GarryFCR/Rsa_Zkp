@@ -41,7 +41,7 @@ func main() {
 
 	//Setmembership(keygen)--------------------------------------------------------------------
 	ck_key := []big.Int{N, G, prime, g, h}
-	crs := setm.KeyGen(ck_key)
+	crs := setm.KeyGen(ck_key, p, q)
 
 	//Root-----------------------------------------------------------------------------------
 	e := hash2prime.Hprime(*u)
@@ -65,7 +65,7 @@ func main() {
 	ce, rq := setup.Pedersen_commit(crs[3:], prime, e)
 	commit_mod := []big.Int{Ce, ce}
 	mod_witness := []big.Int{e, e, r, rq}
-	pi_mod := mod.Prove(crs, commit_mod, mod_witness, int64(64))
+	pi_mod := mod.Prove(crs, commit_mod, mod_witness, int64(12))
 	//fmt.Println(ce)
 
 	ver3 := mod.VerProof(crs, commit_mod, pi_mod)

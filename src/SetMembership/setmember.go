@@ -9,13 +9,13 @@ import (
 		pedersen "../Setup"
 		modEq "../modEq"*/)
 
-func KeyGen(ck []big.Int) []big.Int {
+func KeyGen(ck []big.Int, p, q big.Int) []big.Int {
 
 	N := ck[0]
 	var H *big.Int
 	for {
 		H, _ = rand.Int(rand.Reader, &N)
-		if new(big.Int).Mod(H, &N).Cmp(big.NewInt(0)) != 0 && H.Cmp(big.NewInt(1)) != 0 {
+		if new(big.Int).Mod(H, &p).Cmp(big.NewInt(0)) != 0 && new(big.Int).Mod(H, &q).Cmp(big.NewInt(0)) != 0 && H.Cmp(big.NewInt(1)) != 0 {
 			break
 		}
 	}

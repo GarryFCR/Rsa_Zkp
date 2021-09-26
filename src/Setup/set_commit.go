@@ -23,7 +23,7 @@ func Set_setup(lambda, mu int) (n, f, p, q big.Int) {
 
 	for {
 		F, _ = rand.Int(rand.Reader, N)
-		if F != pk.Primes[0] && F != pk.Primes[1] && F != big.NewInt(1) {
+		if new(big.Int).Mod(F, pk.Primes[0]).Cmp(big.NewInt(0)) != 0 && new(big.Int).Mod(F, pk.Primes[1]).Cmp(big.NewInt(0)) != 0 && F != big.NewInt(1) {
 			break
 		}
 	}

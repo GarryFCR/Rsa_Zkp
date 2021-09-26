@@ -39,7 +39,7 @@ func Prove(crs, commitment, witness []big.Int, lambda int64) []big.Int {
 	rrq, _ := rand.Int(rand.Reader, &q)
 
 	alpha1 := generate.Generate_alpha(G, H, N, re, rr)
-	alpha2 := generate.Generate_alpha(g, h, q, *new(big.Int).Mod(&re, &q), *rrq)
+	alpha2 := generate.Generate_alpha(g, h, q, *new(big.Int).Mod(&re, new(big.Int).Sub(&q, big.NewInt(1))), *rrq)
 
 	x := []big.Int{alpha1, alpha2, commitment[0], commitment[1]}
 	hash := sha256.New()
@@ -53,26 +53,8 @@ func Prove(crs, commitment, witness []big.Int, lambda int64) []big.Int {
 	se := generate.Generate_s(re, c, e)
 	sr := generate.Generate_s(rr, c, r)
 	srq := generate.Generate_s(*rrq, c, rq)
-	srq.Mod(&srq, &q)
-	//--------------------------------------------------------------------------------
-	//h_inverse := new(big.Int).ModInverse(&h, &q)
-	//g_inverse := new(big.Int).ModInverse(&g, &q)
-	cxe := new(big.Int).Mul(&c, &e)
-	cxr := new(big.Int).Mul(&c, &rq)
-	cxe.Mod(cxe, &q)
-	cxr.Mod(cxr, &q)
-	//numerator := new(big.Int).Exp(&commitment[1], &c, &q)
-	ge := new(big.Int).Exp(&g, cxe, &q)
-	hrq := new(big.Int).Exp(&h, cxr, &q)
-	denominator := new(big.Int).Mul(ge, hrq)
-	denominator.Mod(denominator, &q)
-	//fmt.Println(new(big.Int).Sub(numerator, denominator))
-	//--------------------------------------------------------------------------------
-
-	/*fmt.Println(new(big.Int).Mul(&c, &e).BitLen())
-	fmt.Println(new(big.Int).Mul(&c, &rq).BitLen())
-	fmt.Println(q.BitLen())
-	*/pi := []big.Int{alpha1, alpha2, se, sr, srq}
+	srq.Mod(&srq, new(big.Int).Sub(&q, big.NewInt(1)))
+	pi := []big.Int{alpha1, alpha2, se, sr, srq}
 	return pi
 
 }
@@ -91,10 +73,7 @@ func VerProof(crs, commitment, pi []big.Int) int {
 	c := hash2prime.Fu(*c_hash)
 
 	alpha_1 := generate.Generate_alpha_ver(commitment[0], crs[1], crs[2], c, pi[2], pi[3], crs[0])
-	alpha_2 := generate.Generate_alpha_ver(commitment[1], crs[4], crs[5], c, *new(big.Int).Mod(&pi[2], &crs[3]), pi[4], crs[3])
-
-	//fmt.Println(&pi[0], &pi[1])
-	//fmt.Println(&alpha_1, &alpha_2)
+	alpha_2 := generate.Generate_alpha_ver(commitment[1], crs[4], crs[5], c, *new(big.Int).Mod(&pi[2], new(big.Int).Sub(&crs[3], big.NewInt(1))), pi[4], crs[3])
 
 	if pi[0].Cmp(&alpha_1) == 0 && pi[1].Cmp(&alpha_2) == 0 {
 		return 1
