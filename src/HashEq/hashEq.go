@@ -1,4 +1,4 @@
-package hashEq
+package HashEq
 
 import (
 	"crypto/rand"
