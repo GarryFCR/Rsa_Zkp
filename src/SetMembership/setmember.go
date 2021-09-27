@@ -43,7 +43,7 @@ func Prove(crs []big.Int, Cu, cu, u, ru, p, q big.Int) (Ce, ce big.Int, proof_ro
 
 	commit := []big.Int{Ce, Cu}
 	root_witness := []big.Int{e, r, *W}
-	pi_root := root.Prove(crs[:3], commit, root_witness, int64(32), int64(32), int64(32))
+	pi_root := root.Prove(crs[:3], commit, root_witness, int64(256), int64(256), int64(512))
 
 	commit1 := []big.Int{Ce, ce}
 	mod_witness := []big.Int{e, e, r, rq}
@@ -51,8 +51,9 @@ func Prove(crs []big.Int, Cu, cu, u, ru, p, q big.Int) (Ce, ce big.Int, proof_ro
 
 	hash_commitment := []big.Int{ce, cu}
 	hash_witness := []big.Int{e, u, rq, ru, *j}
-	pi_hash := hashEq.Prove(crs[3:], hash_commitment, hash_witness, int64(32), int64(32), int64(32), int64(32))
+	pi_hash := hashEq.Prove(crs[3:], hash_commitment, hash_witness, int64(512), int64(512), int64(512), int64(512))
 
+	//fmt.Printf("Size:%d\n", unsafe.Sizeof(pi_root)+unsafe.Sizeof(pi_hash)+unsafe.Sizeof(pi_mod)+unsafe.Sizeof(Ce)+unsafe.Sizeof(ce)+unsafe.Sizeof(crs))
 	return Ce, ce, pi_root, pi_mod, pi_hash
 
 }
@@ -60,7 +61,7 @@ func Prove(crs []big.Int, Cu, cu, u, ru, p, q big.Int) (Ce, ce big.Int, proof_ro
 func VerProof(crs []big.Int, Cu, cu big.Int, Ce, ce big.Int, pi_root, pi_mod, pi_hash []big.Int) int {
 
 	commit := []big.Int{Ce, Cu}
-	root_bool := root.VerProof(crs[:3], commit, pi_root, int64(32), int64(32), int64(32))
+	root_bool := root.VerProof(crs[:3], commit, pi_root, int64(512), int64(256), int64(256))
 
 	commit1 := []big.Int{Ce, ce}
 	modEq_bool := modEq.VerProof(crs, commit1, pi_mod)

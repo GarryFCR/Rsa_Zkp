@@ -12,7 +12,7 @@ func main() {
 
 	//SETUP------------------------------------------------------------------
 	//PEDERSEN COMMITMENT----------------------------------------------------
-	prime, g, h := setup.Pedersen_setup(12, 12)
+	prime, g, h := setup.Pedersen_setup(512, 512)
 	ck_pedersen := []big.Int{prime, g, h}
 	u := big.NewInt(12345)
 
@@ -24,7 +24,7 @@ func main() {
 	}
 
 	//SET COMMITMENT----------------------------------------------------------
-	N, G, p, q := setup.Set_setup(12, 12)
+	N, G, p, q := setup.Set_setup(512, 512)
 
 	ck_set := []big.Int{N, G}
 	set := []big.Int{*big.NewInt(12342), *big.NewInt(12343), *big.NewInt(12344), *big.NewInt(12345)}
