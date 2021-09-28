@@ -11,13 +11,13 @@ import (
 	modEq "../modEq"
 )
 
-func KeyGen(ck []big.Int, p, q big.Int) []big.Int {
+func KeyGen(ck []big.Int) []big.Int {
 
 	N := ck[0]
 	var H *big.Int
 	for {
 		H, _ = rand.Int(rand.Reader, &N)
-		if new(big.Int).Mod(H, &p).Cmp(big.NewInt(0)) != 0 && new(big.Int).Mod(H, &q).Cmp(big.NewInt(0)) != 0 && H.Cmp(big.NewInt(1)) != 0 {
+		if H.GCD(nil, nil, H, &N).Cmp(big.NewInt(1)) == 0 {
 			break
 		}
 	}
@@ -28,7 +28,7 @@ func KeyGen(ck []big.Int, p, q big.Int) []big.Int {
 
 }
 
-func Prove(crs []big.Int, Cu, cu, u, ru, p, q big.Int) (Ce, ce big.Int, proof_root, proof_mod, proof_hash []big.Int) {
+func Prove(crs, U []big.Int, Cu, cu, u, ru big.Int) (Ce, ce big.Int, proof_root, proof_mod, proof_hash []big.Int) {
 
 	e := hash2prime.Hprime(u)
 	fu := hash2prime.Fu(u)
@@ -36,13 +36,21 @@ func Prove(crs []big.Int, Cu, cu, u, ru, p, q big.Int) (Ce, ce big.Int, proof_ro
 	ce, rq := pedersen.Pedersen_commit(crs[3:], crs[3], e)
 	Ce, r := pedersen.Pedersen_commit(crs[:3], crs[0], e)
 
-	phi := new(big.Int).Mul(new(big.Int).Sub(&q, big.NewInt(1)), new(big.Int).Sub(&p, big.NewInt(1)))
+	Primes := make([]big.Int, len(U))
+	G := crs[1]
+	for i, u_dash := range U {
+		Primes[i] = hash2prime.Hprime(u_dash)
+		if u_dash.Cmp(&u) != 0 {
 
-	inverse := new(big.Int).ModInverse(&e, phi)
-	W := new(big.Int).Exp(&Cu, inverse, &crs[0])
+			G.Exp(&G, &Primes[i], &crs[0])
+		}
+
+	}
+
+	W := G
 
 	commit := []big.Int{Ce, Cu}
-	root_witness := []big.Int{e, r, *W}
+	root_witness := []big.Int{e, r, W}
 	pi_root := root.Prove(crs[:3], commit, root_witness, int64(256), int64(256), int64(512))
 
 	commit1 := []big.Int{Ce, ce}
@@ -61,7 +69,7 @@ func Prove(crs []big.Int, Cu, cu, u, ru, p, q big.Int) (Ce, ce big.Int, proof_ro
 func VerProof(crs []big.Int, Cu, cu big.Int, Ce, ce big.Int, pi_root, pi_mod, pi_hash []big.Int) int {
 
 	commit := []big.Int{Ce, Cu}
-	root_bool := root.VerProof(crs[:3], commit, pi_root, int64(512), int64(256), int64(256))
+	root_bool := root.VerProof(crs[:3], commit, pi_root, int64(512), int64(256), int64(512))
 
 	commit1 := []big.Int{Ce, ce}
 	modEq_bool := modEq.VerProof(crs, commit1, pi_mod)

@@ -14,7 +14,7 @@ func TestProve(t *testing.T) {
 	u := *big.NewInt(12345)
 	e := hash2prime.Hprime(u)
 	prime, g, h := setup.Pedersen_setup(12, 12)
-	N, G, p, q := setup.Set_setup(12, 12)
+	N, G := setup.Set_setup(12, 12)
 
 	ck_set := []big.Int{N, G}
 	set := []big.Int{*big.NewInt(12342), *big.NewInt(12343), *big.NewInt(12344), *big.NewInt(12345)}
@@ -23,7 +23,7 @@ func TestProve(t *testing.T) {
 	var H *big.Int
 	for {
 		H, _ = rand.Int(rand.Reader, &N)
-		if new(big.Int).Mod(H, &p).Cmp(big.NewInt(0)) != 0 && new(big.Int).Mod(H, &q).Cmp(big.NewInt(0)) != 0 && H.Cmp(big.NewInt(1)) != 0 {
+		if H.GCD(nil, nil, H, &N).Cmp(big.NewInt(1)) == 0 {
 			break
 		}
 	}
@@ -33,12 +33,19 @@ func TestProve(t *testing.T) {
 
 	Ce, r := setup.Pedersen_commit(crs[:3], crs[0], e)
 
-	phi := new(big.Int).Mul(new(big.Int).Sub(&q, big.NewInt(1)), new(big.Int).Sub(&p, big.NewInt(1)))
-	inverse := new(big.Int).ModInverse(&e, phi)
-	W := new(big.Int).Exp(&Acc, inverse, &crs[0])
+	Primes := make([]big.Int, len(set))
+	for i, u_dash := range set {
+		Primes[i] = hash2prime.Hprime(u_dash)
+		if u_dash.Cmp(&u) != 0 {
 
+			G.Exp(&G, &Primes[i], &crs[0])
+		}
+
+	}
+
+	W := G
 	commit := []big.Int{Ce, Acc}
-	root_witness := []big.Int{e, r, *W}
+	root_witness := []big.Int{e, r, W}
 
 	//Generation of proof of the root
 	pi_root := Prove(crs[:3], commit, root_witness, int64(12), int64(12), int64(12))
@@ -58,9 +65,20 @@ func TestProve(t *testing.T) {
 	}
 
 	//Giving a non-member input---------------------------------------------------------
-	inverse_ := new(big.Int).ModInverse(big.NewInt(1111), phi)
-	W_ := new(big.Int).Exp(&Acc, inverse_, &crs[0])
-	root_witness_fail := []big.Int{e, r, *W_}
+	x := big.NewInt(1111)
+	Primes1 := make([]big.Int, len(set))
+	G1 := crs[1]
+	for i, u_dash := range set {
+		Primes1[i] = hash2prime.Hprime(u_dash)
+		if u_dash.Cmp(x) != 0 {
+
+			G1.Exp(&G, &Primes1[i], &crs[0])
+		}
+
+	}
+
+	W_ := G1
+	root_witness_fail := []big.Int{e, r, W_}
 	//Generation of proof of the root
 	pi_root_fail := Prove(crs[:3], commit, root_witness_fail, int64(12), int64(12), int64(12))
 	//verification of proof

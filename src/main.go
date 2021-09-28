@@ -24,7 +24,7 @@ func main() {
 	}
 
 	//SET COMMITMENT----------------------------------------------------------
-	N, G, p, q := setup.Set_setup(512, 512)
+	N, G := setup.Set_setup(512, 512)
 
 	ck_set := []big.Int{N, G}
 	set := []big.Int{*big.NewInt(12342), *big.NewInt(12343), *big.NewInt(12344), *big.NewInt(12345)}
@@ -39,11 +39,11 @@ func main() {
 	//SETMEMBERSHIP------------------------------------------------------------
 	//KEYGEN-------------------------------------------------------------------
 	ck_key := []big.Int{N, G, prime, g, h}
-	crs := member.KeyGen(ck_key, p, q)
+	crs := member.KeyGen(ck_key)
 
 	//PROVE--------------------------------------------------------------------
 
-	Ce, ce, pi_root, pi_mod, pi_hash := member.Prove(crs, Acc, cu, *u, ru, p, q)
+	Ce, ce, pi_root, pi_mod, pi_hash := member.Prove(crs, set, Acc, cu, *u, ru)
 
 	//VERIFICATION--------------------------------------------------------------
 

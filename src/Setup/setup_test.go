@@ -48,9 +48,8 @@ func TestPedersen(t *testing.T) {
 func TestSetcommit(t *testing.T) {
 
 	//checking parameters generated
-	N, G, p, q := Set_setup(15, 15)
-	if new(big.Int).Mul(&p, &q).Cmp(&N) != 0 || !p.ProbablyPrime(10) || !q.ProbablyPrime(10) ||
-		G.BitLen() > N.BitLen() {
+	N, G := Set_setup(15, 15)
+	if G.BitLen() > N.BitLen() {
 		t.Fatalf("Parameters are not as expected")
 	}
 

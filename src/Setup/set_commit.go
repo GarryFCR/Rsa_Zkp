@@ -15,7 +15,7 @@ import (
 	hash2prime "../Hashtoprime"
 )
 
-func Set_setup(lambda, mu int) (n, f, p, q big.Int) {
+func Set_setup(lambda, mu int) (n, f big.Int) {
 
 	pk, _ := rsa.GenerateKey(rand.Reader, lambda)
 	var F *big.Int
@@ -30,7 +30,7 @@ func Set_setup(lambda, mu int) (n, f, p, q big.Int) {
 
 	G := new(big.Int).Exp(F, big.NewInt(2), pk.PublicKey.N)
 
-	return *N, *G, *pk.Primes[0], *pk.Primes[1]
+	return *N, *G
 }
 
 //Set_commit generates the RSA Accumulator for the set of primes derived from set of strings using Hash2prime
