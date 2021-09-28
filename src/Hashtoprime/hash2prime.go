@@ -45,15 +45,17 @@ func Hprime(u big.Int) big.Int {
 
 	Huj := Fu(u)
 	j := Fu(u)
+	var temp big.Int
 
 	for {
 
-		temp := Huj
-		temp.Add(&temp, &j)
-		if temp.ProbablyPrime(10) {
+		temp = Huj
+		prime := new(big.Int).Add(&temp, &j)
 
-			return temp
+		//temp.Add(&temp, &j)
+		if prime.ProbablyPrime(10) {
 
+			return *prime
 		}
 
 		j.Add(&j, big.NewInt(1))
