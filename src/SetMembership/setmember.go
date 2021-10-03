@@ -17,7 +17,7 @@ func KeyGen(ck []big.Int) []big.Int {
 	var H *big.Int
 	for {
 		H, _ = rand.Int(rand.Reader, &N)
-		if H.GCD(nil, nil, H, &N).Cmp(big.NewInt(1)) == 0 {
+		if new(big.Int).GCD(nil, nil, H, &N).Cmp(big.NewInt(1)) == 0 {
 			break
 		}
 	}
