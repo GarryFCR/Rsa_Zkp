@@ -15,3 +15,4 @@ In this approach we are commiting neccessary values and then proving them using 
 
  The hash-to-prime used is a deterministic map given in the paper,it maps in a collision resistant manner backed by Cramer's conjecture.
  The Setmembership package contains the integration of all the above mentioned protocols.
+ check.go gives an example of the flow.(Root verification may fail when values are not within bound defined by lamdas)
