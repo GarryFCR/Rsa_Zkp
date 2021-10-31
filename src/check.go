@@ -48,16 +48,16 @@ func main() {
 	//SETMEMBERSHIP------------------------------------------------------------
 	//KEYGEN-------------------------------------------------------------------
 	ck_key := []big.Int{N, G, prime, g, h}
+	fmt.Println()
 	fmt.Println("Generating key for protocol...")
 	crs := member.KeyGen(ck_key)
 
 	//PROVE--------------------------------------------------------------------
 	fmt.Println()
 	fmt.Println("---------------------Proving----------------------")
-	fmt.Println()
 
 	Ce, ce, pi_root, pi_mod, pi_hash := member.Prove(crs, set, Acc, cu, *u, ru)
-
+	fmt.Println("Proof generated")
 	//VERIFICATION--------------------------------------------------------------
 
 	BOOL := member.VerProof(crs, Acc, cu, Ce, ce, pi_root, pi_mod, pi_hash)
