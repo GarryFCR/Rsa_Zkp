@@ -12,7 +12,7 @@ import (
 	"crypto/rsa"
 	"math/big"
 
-	hash2prime "../Hashtoprime"
+	hash2prime "github.com/GarryFCR/Rsazkp/src/Hashtoprime"
 )
 
 func Set_setup(lambda, mu int) (n, f big.Int) {

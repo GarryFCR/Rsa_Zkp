@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"math/big"
 
-	member "./SetMembership"
-	setup "./Setup"
+	member "github.com/GarryFCR/Rsazkp/src/SetMembership"
+	setup "github.com/GarryFCR/Rsazkp/src/Setup"
 )
 
 func main() {

@@ -13,8 +13,8 @@ import (
 	"fmt"
 	"math/big"
 
-	hash2prime "../Hashtoprime"
-	generate "../Root"
+	hash2prime "github.com/GarryFCR/Rsazkp/src/Hashtoprime"
+	generate "github.com/GarryFCR/Rsazkp/src/Root"
 )
 
 //Prove function returns the proof of the fact that C-e and c_e commits to the same value

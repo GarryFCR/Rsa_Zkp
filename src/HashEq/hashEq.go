@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"math/big"
 
-	hash2prime "../Hashtoprime"
-	generate "../Root"
+	hash2prime "github.com/GarryFCR/Rsazkp/src/Hashtoprime"
+	generate "github.com/GarryFCR/Rsazkp/src/Root"
 )
 
 func Prove(crs, commitment, witness []big.Int, lambda_s, lambda_z, mu, eta int64) []big.Int {

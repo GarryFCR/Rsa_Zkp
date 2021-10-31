@@ -5,8 +5,8 @@ import (
 	"math/big"
 	"testing"
 
-	hash2prime "../Hashtoprime"
-	setup "../Setup"
+	hash2prime "github.com/GarryFCR/Rsazkp/src/Hashtoprime"
+	setup "github.com/GarryFCR/Rsazkp/src/Setup"
 )
 
 func TestProve(t *testing.T) {

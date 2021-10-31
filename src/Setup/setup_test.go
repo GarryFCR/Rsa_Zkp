@@ -4,7 +4,7 @@ import (
 	"math/big"
 	"testing"
 
-	hash2prime "../Hashtoprime"
+	hash2prime "github.com/GarryFCR/Rsazkp/src/Hashtoprime"
 )
 
 //Test for the pedersen commitment

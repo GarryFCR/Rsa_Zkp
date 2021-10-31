@@ -4,11 +4,11 @@ import (
 	"crypto/rand"
 	"math/big"
 
-	hashEq "../HashEq"
-	hash2prime "../Hashtoprime"
-	root "../Root"
-	pedersen "../Setup"
-	modEq "../modEq"
+	hashEq "github.com/GarryFCR/Rsazkp/src/HashEq"
+	hash2prime "github.com/GarryFCR/Rsazkp/src/Hashtoprime"
+	root "github.com/GarryFCR/Rsazkp/src/Root"
+	pedersen "github.com/GarryFCR/Rsazkp/src/Setup"
+	modEq "github.com/GarryFCR/Rsazkp/src/modEq"
 )
 
 func KeyGen(ck []big.Int) []big.Int {
