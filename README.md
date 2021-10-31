@@ -11,7 +11,7 @@ In this approach we are commiting neccessary values and then proving them using 
  * **Setup** : A simple implementation of Pedersen commitment in Zq for commiting set elements and also corresponding prime elements. We also have a set commitment scheme using RSA accumulators which provides a very short commitment for the entire set.
  * **Root** : This sub-protocol proofs in zero knowledge that an element in the set is a member without revealing the element itself. This is done by calculating the witness,using pedersen commitments and schnorr's authentication
  * **ModEq** : A ZK proof that Ce(commitment of prime element e in RSA group) and ce(commitment of prime element e in prime order group) commit to the same value modulo q.
- * **HashEq** A ZK proof that for a given prime e, whose preimage is set member u there exist a j such that e = Hprime(u) = H(u,j) = F(u)+j .
+ * **HashEq** A ZK proof that for a given prime e, whose preimage is set member u there exist a j such that e = Hprime(u) = H(u,j) = F(u)+j .(The proof and verification for this sub-protocol unlike the others  was self-made and may be liability without further investigation )
 
  The hash-to-prime used is a deterministic map given in the paper,it maps in a collision resistant manner backed by Cramer's conjecture.
  The Setmembership package contains the integration of all the above mentioned protocols.
