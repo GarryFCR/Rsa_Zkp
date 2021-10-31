@@ -194,8 +194,12 @@ func VerProof(crs, commitment, pi []big.Int, lambda, lambda_s, mu int64) int {
 
 	if alpha1.Cmp(&alpha_1) == 0 && alpha2.Cmp(&alpha_2) == 0 && alpha3.Cmp(&alpha_3) == 0 && alpha4.Cmp(&alpha_4) == 0 && se_bool {
 		return 1
+	} else {
+		fmt.Println("Root verification failed")
+
 	}
-	fmt.Println(alpha1.Cmp(&alpha_1), alpha2.Cmp(&alpha_2), alpha3.Cmp(&alpha_3), alpha4.Cmp(&alpha_4), se_bool)
+
+	//fmt.Println(alpha1.Cmp(&alpha_1), alpha2.Cmp(&alpha_2), alpha3.Cmp(&alpha_3), alpha4.Cmp(&alpha_4), se_bool)
 
 	return 0
 

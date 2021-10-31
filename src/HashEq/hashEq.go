@@ -112,6 +112,9 @@ func VerProof(crs, commitment, pi []big.Int) int {
 
 	if alpha1.Cmp(&alpha_1) == 0 && alpha2.Cmp(&alpha_2) == 0 && alpha3.Cmp(&alpha_3) == 0 && alpha4.Cmp(&alpha_4) == 0 {
 		return 1
+	} else {
+		fmt.Println("HashEq verification failed")
+
 	}
 
 	return 0

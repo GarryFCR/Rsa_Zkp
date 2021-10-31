@@ -19,8 +19,12 @@ func main() {
 	cu, ru := setup.Pedersen_commit(ck_pedersen, prime, *u)
 
 	ver := setup.Pedersen_ver(ck_pedersen, cu, *u, ru)
+	fmt.Println("--------------Commiting a set-member--------------")
 	if ver == 1 {
 		fmt.Println("Pedersen:Commitment VERIFIED")
+	} else {
+		fmt.Println("Pedersen verification failed")
+
 	}
 
 	//SET COMMITMENT----------------------------------------------------------
@@ -32,25 +36,36 @@ func main() {
 	Acc, _ := setup.Set_commit(ck_set, set)
 
 	ver1 := setup.Set_ver(ck_set, set, Acc)
+	fmt.Println()
+	fmt.Println("-------------------Commiting the set--------------")
 	if ver1 == 1 {
 		fmt.Println("Set commit:Commitment VERIFIED")
+	} else {
+		fmt.Println("Set verification failed")
+
 	}
 
 	//SETMEMBERSHIP------------------------------------------------------------
 	//KEYGEN-------------------------------------------------------------------
 	ck_key := []big.Int{N, G, prime, g, h}
+	fmt.Println("Generating key for protocol...")
 	crs := member.KeyGen(ck_key)
 
 	//PROVE--------------------------------------------------------------------
+	fmt.Println()
+	fmt.Println("---------------------Proving----------------------")
+	fmt.Println()
 
 	Ce, ce, pi_root, pi_mod, pi_hash := member.Prove(crs, set, Acc, cu, *u, ru)
 
 	//VERIFICATION--------------------------------------------------------------
 
 	BOOL := member.VerProof(crs, Acc, cu, Ce, ce, pi_root, pi_mod, pi_hash)
-
+	fmt.Println("---------------------Verification-----------------")
 	if BOOL == 1 {
 		fmt.Println("Verified")
+	} else {
+		fmt.Println("Verification failed")
 	}
 
 }

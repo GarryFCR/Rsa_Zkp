@@ -77,6 +77,9 @@ func VerProof(crs, commitment, pi []big.Int) int {
 
 	if pi[0].Cmp(&alpha_1) == 0 && pi[1].Cmp(&alpha_2) == 0 {
 		return 1
+	} else {
+		fmt.Println("Modeq verification failed")
+
 	}
 
 	return 0
