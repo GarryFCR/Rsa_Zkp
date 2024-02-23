@@ -51,7 +51,7 @@ func Prove(crs, U []big.Int, Cu, cu, u, ru big.Int) (Ce, ce big.Int, proof_root,
 
 	commit := []big.Int{Ce, Cu}
 	root_witness := []big.Int{e, r, W}
-	pi_root := root.Prove(crs[:3], commit, root_witness, int64(256), int64(256), int64(512))
+	pi_root := root.Prove(crs[:3], commit, root_witness, int64(512), int64(512), int64(512))
 
 	commit1 := []big.Int{Ce, ce}
 	mod_witness := []big.Int{e, e, r, rq}
