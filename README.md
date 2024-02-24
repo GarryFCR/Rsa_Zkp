@@ -17,7 +17,8 @@ In this approach we are commiting neccessary values and then proving them using 
  
  
  The Setmembership package contains the integration of all the above mentioned sub-protocols (Proving and Verifying).
-check.go gives an example of the flow.(Root verification may fail when values are not within bound defined by lamdas).
+check.go gives an example of the flow.
+If you want to change the bounds please modify the hard coded values in the root file. depending to what are your likings.
 
 ### Improvement required
 * Investigating the security of implemented  HashEq

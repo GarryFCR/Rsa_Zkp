@@ -32,7 +32,7 @@ func Pedersen_setup(lambda, nu int64) (x, y, z big.Int) {
 		}
 		fmt.Println(prime, prime_bound1.Sign(), prime_bound2.Sign())
 	}
-	//fmt.Println(prime)
+
 	g, _ := rand.Int(rand.Reader, prime)
 	h, _ := rand.Int(rand.Reader, prime)
 	//fmt.Println(prime, g, h)

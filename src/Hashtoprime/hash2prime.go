@@ -53,7 +53,7 @@ func Hprime(u big.Int) big.Int {
 		prime := new(big.Int).Add(&temp, &j)
 
 		//temp.Add(&temp, &j)
-		if prime.ProbablyPrime(10) {
+		if prime.ProbablyPrime(500) {
 
 			return *prime
 		}
